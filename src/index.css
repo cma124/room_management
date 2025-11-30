@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ef6c57;
+  --color-light: #fefdfb;
+  --color-dark: #2c3a5c;
+  --color-card-light: #ffffff;
+  --color-card-dark: #394a73;
+  --color-light-primary: #1f2937;
+  --color-dark-primary: #f9fafb;
+  --color-light-secondary: #6b7280;
+  --color-dark-secondary: #d1d5db;
+  --color-coral: #f28e76;
+  --color-pine-green: #2e8b57;
+  --color-pale-pink: #fadadd;
+  --color-navy: #2c3e50;
+  --color-forest: #2e7d32;
+
+  --font-header: "Pacifico", cursive;
+}
+
+@layer base {
+  body {
+    font-family: "Roboto", sans-serif;
+    min-height: max(884px, 100dvh);
+    @apply bg-light;
+  }
+}
