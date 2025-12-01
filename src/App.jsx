@@ -6,6 +6,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import HomePage from "./pages/HomePage";
 import RoomPage from "./pages/RoomPage";
 import GuestPage from "./pages/GuestPage";
+import CalendarPage from "./pages/CalendarPage";
 import UsersPage from "./pages/UsersPage";
 import UserPage from "./pages/UserPage";
 
@@ -20,7 +21,12 @@ const App = () => {
             <Route index element={<HomePage />} />
             <Route path="/rooms/create" element={<RoomPage />} />
             <Route path="/rooms/:id/edit" element={<RoomPage />} />
-            <Route path="/rooms/:id" element={<GuestPage />} />
+            <Route path="/rooms/:id/guests/create" element={<GuestPage />} />
+            <Route
+              path="/rooms/:id/guests/:guestId/edit"
+              element={<GuestPage />}
+            />
+            <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/users/create" element={<UserPage />} />
             <Route path="/users/:profile" element={<UserPage />} />

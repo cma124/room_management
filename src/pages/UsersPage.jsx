@@ -27,35 +27,37 @@ const UsersPage = () => {
   }, []);
 
   return (
-    <div className="h-screen mx-auto md:mx-5 mt-4 flex flex-col" id="app">
-      <header className="shrink-0 px-6 pt-12 pb-4 mb-1">
-        <h1 className="text-3xl font-bold text-slate-900">
-          App Users - {users.length && users.length}
-        </h1>
-      </header>
+    <>
+      <div className="h-screen mx-auto md:mx-5 mt-4 flex flex-col" id="app">
+        <header className="shrink-0 px-6 pt-12 pb-4 mb-1">
+          <h1 className="text-3xl font-bold text-slate-900">
+            App Users - {users.length && users.length}
+          </h1>
+        </header>
 
-      <main className="grow overflow-y-auto px-6">
-        <ul className="space-y-5">
-          {loading ? (
-            <Spinner />
-          ) : (
-            users.length &&
-            users.map((user) => <UserCard key={user.$id} user={user} />)
-          )}
-        </ul>
-      </main>
+        <main className="grow overflow-y-auto px-6">
+          <ul className="space-y-5">
+            {loading ? (
+              <Spinner />
+            ) : (
+              users.length &&
+              users.map((user) => <UserCard key={user.$id} user={user} />)
+            )}
+          </ul>
+        </main>
 
-      <div className="fixed bottom-24 right-8">
-        <button
-          onClick={() => navigate("/users/create")}
-          className="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-white shadow-lg"
-        >
-          <span className="text-3xl">+</span>
-        </button>
+        <div className="fixed bottom-24 right-8">
+          <button
+            onClick={() => navigate("/users/create")}
+            className="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-white shadow-lg"
+          >
+            <span className="text-3xl">+</span>
+          </button>
+        </div>
       </div>
 
       <NavBar />
-    </div>
+    </>
   );
 };
 

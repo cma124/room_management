@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FaCouch, FaUsers, FaUser } from "react-icons/fa6";
+import { FaCouch, FaCalendarDays, FaUsers, FaUser } from "react-icons/fa6";
 
 const NavBar = () => {
   const navClass = ({ isActive }) =>
@@ -12,6 +12,11 @@ const NavBar = () => {
       <NavLink to="/" className={navClass}>
         <FaCouch />
         <span className="text-sm font-medium">Rooms</span>
+      </NavLink>
+
+      <NavLink to="/calendar" className={navClass}>
+        <FaCalendarDays />
+        <span className="text-sm font-medium">Calendar</span>
       </NavLink>
 
       <NavLink to="/users" className={navClass}>

@@ -65,21 +65,13 @@ export const checkInputDates = (start_date, end_date) => {
   }
 };
 
-// Function to get the timestamp two hours ago in UTC ISO format
-export const getTwoHoursAgoUTC = () => {
-  const date = new Date();
-  date.setTime(date.getTime() - 2 * 60 * 60 * 1000);
-
-  return date.toISOString();
-};
-
 // Function to calculate time difference
 export const calculateTimeRemaining = (updated_date) => {
   const endDate = new Date(updated_date);
   const now = new Date();
 
-  // Add two hours to endDate
-  endDate.setHours(endDate.getHours() + 2);
+  // Add three hours to endDate
+  endDate.setHours(endDate.getHours() + 3);
 
   // Calculate difference in milliseconds
   const difference = endDate.getTime() - now.getTime();

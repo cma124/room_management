@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getRoom, updateGuest, removeGuest } from "../utils/appwriteApi";
+import {
+  getGuest,
+  updateGuest,
+  deleteGuest,
+  createGuest,
+  getRoom,
+} from "../utils/appwriteApi";
 import {
   checkInputDates,
   calculateTimeRemaining,
@@ -9,8 +15,11 @@ import {
 } from "../utils/datetimeUtils";
 
 const GuestPage = () => {
+  const navigate = useNavigate();
+  const { id, guestId } = useParams();
+
+  const [room, setRoom] = useState(null);
   const [guest, setGuest] = useState(null);
-  const [timerStop, setTimerStop] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState({
     hours: 0,
     minutes: 0,
@@ -19,8 +28,6 @@ const GuestPage = () => {
   });
 
   const guestForm = useRef(null);
-  const { id } = useParams();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,24 +61,46 @@ const GuestPage = () => {
         return;
     }
 
-    try {
-      await updateGuest({
-        roomId: id,
-        guestName: guestForm.current.guest_name.value,
-        guestPhone: guestForm.current.guest_phone.value,
-        guestEmail: guestForm.current.guest_email.value,
-        startDate: guestForm.current.start_date.value,
-        endDate: guestForm.current.end_date.value,
-        noOfGuests: parseInt(guestForm.current.no_of_guests.value),
-        status: guestForm.current.status.value,
-        guestDeposit: parseInt(guestForm.current.guest_deposit.value),
-        guestRemarks: guestForm.current.guest_remarks.value,
-      });
+    if (!guestId) {
+      try {
+        await createGuest({
+          guestName: guestForm.current.guest_name.value,
+          guestPhone: guestForm.current.guest_phone.value,
+          guestEmail: guestForm.current.guest_email.value,
+          startDate: guestForm.current.start_date.value,
+          endDate: guestForm.current.end_date.value,
+          noOfGuests: parseInt(guestForm.current.no_of_guests.value),
+          guestDeposit: parseInt(guestForm.current.guest_deposit.value),
+          guestRemarks: guestForm.current.guest_remarks.value,
+          status: guestForm.current.status.value,
+          roomId: id,
+        });
 
-      toast.success("Booking is saved successfully");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
+        toast.success("Booking is saved successfully");
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        await updateGuest({
+          guestId,
+          guestName: guestForm.current.guest_name.value,
+          guestPhone: guestForm.current.guest_phone.value,
+          guestEmail: guestForm.current.guest_email.value,
+          startDate: guestForm.current.start_date.value,
+          endDate: guestForm.current.end_date.value,
+          noOfGuests: parseInt(guestForm.current.no_of_guests.value),
+          guestDeposit: parseInt(guestForm.current.guest_deposit.value),
+          guestRemarks: guestForm.current.guest_remarks.value,
+          status: guestForm.current.status.value,
+        });
+
+        toast.success("Booking is updated successfully");
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -79,9 +108,7 @@ const GuestPage = () => {
     e.preventDefault();
 
     try {
-      if (!timerStop) {
-        await removeGuest(id);
-      }
+      await deleteGuest(guestId);
 
       toast.success("Booking is cleared successfully");
       navigate("/");
@@ -104,7 +131,6 @@ const GuestPage = () => {
 
         // If time has expired, stop the timer
         if (remainingTime.expired) {
-          setTimerStop(true);
           clearInterval(timer);
         }
       } else {
@@ -121,73 +147,76 @@ const GuestPage = () => {
   useEffect(() => {
     const loadGuest = async () => {
       try {
-        const guestResponse = await getRoom(id);
+        if (guestId) {
+          const guestResponse = await getGuest(guestId);
+          setGuest(guestResponse);
 
-        setGuest(guestResponse);
+          const roomReponse = await getRoom(id);
+          setRoom(roomReponse);
 
-        guestForm.current.guest_name.value = guestResponse.guest_name;
-        guestForm.current.guest_phone.value = guestResponse.guest_phone;
-        guestForm.current.guest_email.value = guestResponse.guest_email;
-        guestForm.current.start_date.value =
-          guestResponse.start_date && guestResponse.start_date.split("T")[0];
-        guestForm.current.end_date.value =
-          guestResponse.end_date && guestResponse.end_date.split("T")[0];
-        guestForm.current.no_of_guests.value = guestResponse.no_of_guests;
-        guestForm.current.status.value =
-          guestResponse.status === "available"
-            ? "booking"
-            : guestResponse.status;
-        guestForm.current.guest_deposit.value = guestResponse.guest_deposit;
-        guestForm.current.guest_remarks.value = guestResponse.guest_remarks;
+          guestForm.current.guest_name.value = guestResponse.guest_name;
+          guestForm.current.guest_phone.value = guestResponse.guest_phone;
+          guestForm.current.guest_email.value = guestResponse.guest_email;
+          guestForm.current.start_date.value =
+            guestResponse.start_date && guestResponse.start_date.split("T")[0];
+          guestForm.current.end_date.value =
+            guestResponse.end_date && guestResponse.end_date.split("T")[0];
+          guestForm.current.no_of_guests.value = guestResponse.no_of_guests;
+          guestForm.current.status.value =
+            guestResponse.status === null ? "booking" : guestResponse.status;
+          guestForm.current.guest_deposit.value = guestResponse.guest_deposit;
+          guestForm.current.guest_remarks.value = guestResponse.guest_remarks;
+        }
       } catch (error) {
         console.error(error);
       }
     };
 
-    loadGuest();
+    if (guestId) {
+      loadGuest();
+    }
   }, []);
 
   return (
     <div className="mx-auto md:mx-5 mt-4 min-h-screen flex flex-col p-6">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-navy">
-          {guest && guest.room_no}{" "}
-          {guest && guest.room_name && `- ${guest.room_name}`}
+          {!guestId && "Create New Booking"}
+          {guestId && room && `${room.room_no} `}
+          {guestId && room && room.room_name && `- ${room.room_name}`}
         </h1>
 
-        {guest &&
-          guest.$updatedAt &&
-          guest.status === "booking" && (
-            <div className="mt-5 p-3 border-l-4 border-primary bg-blue-50">
-              <p className="text-sm font-semibold text-gray-600">
-                Booking Time Remaining
-              </p>
+        {guest && guest.$updatedAt && guest.status === "booking" && (
+          <div className="mt-5 p-3 border-l-4 border-primary bg-blue-50">
+            <p className="text-sm font-semibold text-gray-600">
+              Booking Time Remaining
+            </p>
 
-              <p
-                className={`font-mono text-4xl ${
-                  timeRemaining.expired ? "text-red-600" : "text-primary"
-                }`}
-              >
-                {timeRemaining.expired ? (
-                  "EXPIRED"
-                ) : (
-                  <>
-                    <span className="tabular-nums">
-                      {formatTime(timeRemaining.hours)}
-                    </span>
-                    :
-                    <span className="tabular-nums">
-                      {formatTime(timeRemaining.minutes)}
-                    </span>
-                    :
-                    <span className="tabular-nums">
-                      {formatTime(timeRemaining.seconds)}
-                    </span>
-                  </>
-                )}
-              </p>
-            </div>
-          )}
+            <p
+              className={`font-mono text-4xl ${
+                timeRemaining.expired ? "text-red-600" : "text-primary"
+              }`}
+            >
+              {timeRemaining.expired ? (
+                "EXPIRED"
+              ) : (
+                <>
+                  <span className="tabular-nums">
+                    {formatTime(timeRemaining.hours)}
+                  </span>
+                  :
+                  <span className="tabular-nums">
+                    {formatTime(timeRemaining.minutes)}
+                  </span>
+                  :
+                  <span className="tabular-nums">
+                    {formatTime(timeRemaining.seconds)}
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        )}
       </header>
 
       <main>
@@ -350,7 +379,6 @@ const GuestPage = () => {
             <button
               type="submit"
               className="w-full h-14 bg-primary text-white font-bold text-lg rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light focus:ring-primary transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
-              disabled={timerStop}
             >
               Save Booking
             </button>

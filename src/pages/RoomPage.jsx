@@ -43,20 +43,20 @@ const RoomPage = () => {
     }
   };
 
-  const loadRoom = async () => {
-    try {
-      const roomResponse = await getRoom(id);
-
-      roomForm.current.room_no.value = roomResponse.room_no;
-      roomForm.current.room_name.value = roomResponse.room_name;
-      roomForm.current.room_size.value = roomResponse.room_size;
-      roomForm.current.room_remarks.value = roomResponse.room_remarks;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const loadRoom = async () => {
+      try {
+        const roomResponse = await getRoom(id);
+
+        roomForm.current.room_no.value = roomResponse.room_no;
+        roomForm.current.room_name.value = roomResponse.room_name;
+        roomForm.current.room_size.value = roomResponse.room_size;
+        roomForm.current.room_remarks.value = roomResponse.room_remarks;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     if (id) {
       loadRoom();
     }
