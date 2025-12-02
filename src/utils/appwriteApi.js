@@ -62,15 +62,30 @@ export const deleteRoom = async (rowId) => {
   });
 };
 
-export const listGuests = async () => {
+export const listOccupiedGuests = async () => {
   return await tablesDB.listRows({
     databaseId: DATABASE_ID,
     tableId: GUESTS_TABLE_ID,
-    queries: [Query.orderAsc("start_date")],
+    queries: [
+      Query.equal("status", ["occupied"]),
+      Query.orderAsc("start_date"),
+    ],
   });
 };
 
-export const listGuestsByRoomId = async (roomId) => {
+export const listGuestsByRoomId = async (roomId, status = "") => {
+  if (status) {
+    return await tablesDB.listRows({
+      databaseId: DATABASE_ID,
+      tableId: GUESTS_TABLE_ID,
+      queries: [
+        Query.equal("room_id", [roomId]),
+        Query.equal("status", [status]),
+        Query.orderAsc("start_date"),
+      ],
+    });
+  }
+
   return await tablesDB.listRows({
     databaseId: DATABASE_ID,
     tableId: GUESTS_TABLE_ID,

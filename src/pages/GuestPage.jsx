@@ -7,12 +7,15 @@ import {
   deleteGuest,
   createGuest,
   getRoom,
+  listGuestsByRoomId,
 } from "../utils/appwriteApi";
 import {
   checkInputDates,
   calculateTimeRemaining,
   formatTime,
+  formatDate,
 } from "../utils/datetimeUtils";
+import { checkBookingConflict } from "../utils/calendarUtils";
 
 const GuestPage = () => {
   const navigate = useNavigate();
@@ -59,6 +62,27 @@ const GuestPage = () => {
       case null:
         console.error("Input Dates error");
         return;
+    }
+
+    try {
+      const existingGuests = await listGuestsByRoomId(id, "occupied");
+      const conflictGuest = checkBookingConflict(
+        guestForm.current.start_date.value,
+        guestForm.current.end_date.value,
+        existingGuests.rows,
+        guestId
+      );
+
+      if (conflictGuest) {
+        toast.warning(
+          `There is an existing booking from ${formatDate(
+            conflictGuest.start_date
+          )} to ${formatDate(conflictGuest.end_date)}`
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
     }
 
     if (!guestId) {

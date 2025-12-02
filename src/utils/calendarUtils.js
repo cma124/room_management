@@ -25,3 +25,33 @@ export const transformGuestToEvent = (guest) => {
     },
   };
 };
+
+export const checkBookingConflict = (
+  newStart,
+  newEnd,
+  existingGuests,
+  guestIdToExclude = null
+) => {
+  const proposedStart = moment(newStart);
+  const proposedEnd = moment(newEnd);
+
+  for (const existingGuest of existingGuests) {
+    if (guestIdToExclude && existingGuest.$id === guestIdToExclude) {
+      continue;
+    }
+
+    const existingStart = moment(existingGuest.start_date);
+    const existingEnd = moment(existingGuest.end_date);
+
+    const nonOverlap1 = proposedEnd.isSameOrBefore(existingStart, "day");
+    const nonOverlap2 = proposedStart.isSameOrAfter(existingEnd, "day");
+
+    const isConflict = !(nonOverlap1 || nonOverlap2);
+
+    if (isConflict) {
+      return existingGuest;
+    }
+  }
+
+  return null;
+};

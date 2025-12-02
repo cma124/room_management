@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { toast } from "react-toastify";
-import { listGuests, listRooms } from "../utils/appwriteApi";
+import { listOccupiedGuests, listRooms } from "../utils/appwriteApi";
 import { transformGuestToEvent } from "../utils/calendarUtils";
 import Spinner from "../components/Spinner";
 
@@ -18,7 +18,7 @@ const CalendarPage = () => {
       try {
         setLoading(true);
         const [guestsResponse, roomsResponse] = await Promise.all([
-          listGuests(),
+          listOccupiedGuests(),
           listRooms(),
         ]);
 
@@ -44,10 +44,7 @@ const CalendarPage = () => {
       // Filter guests by the selected room ID
       const filteredGuests = allGuests.filter(
         (guest) =>
-          guest.room_id === selectedRoomId &&
-          guest.status !== "available" &&
-          guest.start_date &&
-          guest.end_date
+          guest.room_id === selectedRoomId && guest.start_date && guest.end_date
       );
 
       // Transform filtered guests into FullCalendar events
