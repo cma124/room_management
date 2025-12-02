@@ -62,6 +62,14 @@ export const deleteRoom = async (rowId) => {
   });
 };
 
+export const listGuests = async () => {
+  return await tablesDB.listRows({
+    databaseId: DATABASE_ID,
+    tableId: GUESTS_TABLE_ID,
+    queries: [Query.orderAsc("start_date")],
+  });
+};
+
 export const listGuestsByRoomId = async (roomId) => {
   return await tablesDB.listRows({
     databaseId: DATABASE_ID,

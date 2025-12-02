@@ -28,7 +28,7 @@ const UsersPage = () => {
 
   return (
     <>
-      <div className="h-screen mx-auto md:mx-5 mt-4 flex flex-col" id="app">
+      <div className="h-screen mx-auto md:mx-5 flex flex-col" id="app">
         <header className="shrink-0 px-6 pt-12 pb-4 mb-1">
           <h1 className="text-3xl font-bold text-slate-900">
             App Users - {users.length && users.length}

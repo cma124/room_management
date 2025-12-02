@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  FaPlus,
   FaPen,
   FaRegTrashCan,
   FaChevronDown,
@@ -31,9 +32,13 @@ const RoomCard = ({ room, loadRooms }) => {
     </div>
   );
 
-  const handleToggleAccordion = (e) => {
-    e.stopPropagation();
+  const handleToggleAccordion = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  const handleCreateGuest = (e) => {
+    e.stopPropagation();
+    navigate(`/rooms/${room.$id}/guests/create`);
   };
 
   const handleEditRoom = (e) => {
@@ -53,10 +58,6 @@ const RoomCard = ({ room, loadRooms }) => {
     }
   };
 
-  const handleCreateGuest = () => {
-    navigate(`/rooms/${room.$id}/guests/create`);
-  };
-
   useEffect(() => {
     const loadGuests = async () => {
       const guestsResponse = await listGuestsByRoomId(room.$id);
@@ -67,42 +68,43 @@ const RoomCard = ({ room, loadRooms }) => {
   }, []);
 
   return (
-    <div onClick={handleCreateGuest}>
+    <div onClick={handleToggleAccordion}>
       <div className="bg-card-light p-4 rounded-lg shadow-sm flex items-center space-x-4">
         <div className="grow">
           <div className="flex justify-between items-center mb-2">
-            <div className="flex items-start space-x-2">
+            <div className="flex items-center space-x-3">
               <h3 className="text-lg font-semibold text-light-primary">
                 {room.room_no} {room.room_name && `- ${room.room_name}`}
               </h3>
 
-              {guests.length > 0 && (
-                <button
-                  onClick={handleToggleAccordion}
-                  className="p-1 rounded-full text-light-secondary hover:bg-gray-100"
-                >
-                  {isExpanded ? (
-                    <FaChevronUp className="text-lg md:text-xl" />
-                  ) : (
-                    <FaChevronDown className="text-lg md:text-xl" />
-                  )}
-                </button>
-              )}
+              {guests.length > 0 &&
+                (isExpanded ? (
+                  <FaChevronUp className="text-lg md:text-xl" />
+                ) : (
+                  <FaChevronDown className="text-lg md:text-xl" />
+                ))}
             </div>
 
-            <div className="flex space-x-3 md:space-x-5">
+            <div className="flex space-x-1 sm:space-x-3 md:space-x-5">
+              <button
+                onClick={handleCreateGuest}
+                className="p-2 rounded-full hover:bg-gray-100 text-light-secondary"
+              >
+                <FaPlus className="text-base sm:text-lg md:text-xl" />
+              </button>
+
               <button
                 onClick={handleEditRoom}
                 className="p-2 rounded-full hover:bg-gray-100 text-light-secondary"
               >
-                <FaPen className="text-base" />
+                <FaPen className="text-base sm:text-lg md:text-xl" />
               </button>
 
               <button
                 onClick={handleDeleteRoom}
                 className="p-2 rounded-full hover:bg-gray-100 text-light-secondary"
               >
-                <FaRegTrashCan className="text-base" />
+                <FaRegTrashCan className="text-base sm:text-lg md:text-xl" />
               </button>
             </div>
           </div>
