@@ -7,7 +7,11 @@ import {
   FaChevronUp,
 } from "react-icons/fa6";
 import { toast } from "react-toastify";
-import { deleteRoom, listGuestsByRoomId } from "../utils/appwriteApi";
+import {
+  deleteRoom,
+  listGuestsByRoomId,
+  deleteGuest,
+} from "../utils/appwriteApi";
 import { useEffect, useState } from "react";
 import RoomCardBar from "./RoomCardBar";
 
@@ -49,11 +53,22 @@ const RoomCard = ({ room, loadRooms }) => {
   const handleDeleteRoom = async (e) => {
     e.stopPropagation();
 
-    if (!window.confirm("Are you sure you want to delete your room?")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete your room? This will delete ALL associated guests bookings."
+      )
+    ) {
       return false;
     }
 
     try {
+      const guestsResponse = await listGuestsByRoomId(room.$id);
+      const guestIds = guestsResponse.rows.map((row) => row.$id);
+
+      if (guestIds && guestIds.length > 0) {
+        await Promise.all(guestIds.map((guestId) => deleteGuest(guestId)));
+      }
+
       await deleteRoom(room.$id);
       toast.success("Room is deleted successfully");
       loadRooms();
