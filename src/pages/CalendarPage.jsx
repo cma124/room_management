@@ -88,7 +88,7 @@ const CalendarPage = () => {
         >
           {allRooms.map((room) => (
             <option key={room.$id} value={room.$id}>
-              {room.room_no}
+              {room.room_no} {room.room_name && `- ${room.room_name}`}
             </option>
           ))}
         </select>
