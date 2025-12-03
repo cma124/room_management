@@ -28,7 +28,10 @@ export const getDaysDifference = (start_date, end_date) => {
     if (startDate.getTime() > today.getTime()) {
       differenceMilliSec = Math.abs(endDate.getTime() - startDate.getTime());
       return Math.round(differenceMilliSec / oneDayMilliSec) + 1 + " Days";
-    } else if (today.getTime() < endDate.getTime()) {
+    } else if (
+      today.getTime() >= startDate.getTime() &&
+      today.getTime() <= endDate.getTime()
+    ) {
       differenceMilliSec = Math.abs(endDate.getTime() - today.getTime());
       return Math.round(differenceMilliSec / oneDayMilliSec) + 1 + " Days Left";
     }
