@@ -49,6 +49,10 @@ const RoomCard = ({ room, loadRooms }) => {
   const handleDeleteRoom = async (e) => {
     e.stopPropagation();
 
+    if (!window.confirm("Are you sure you want to delete your room?")) {
+      return false;
+    }
+
     try {
       await deleteRoom(room.$id);
       toast.success("Room is deleted successfully");
